@@ -165,7 +165,6 @@ Pacote* FuncoesSocket::receive(int timeout) {
   }
 
   this->lastData = data;
-  // TODO delete msg
   return data;
 }
 
@@ -211,7 +210,6 @@ Pacote* FuncoesSocket::receive(int timeout, int time) {
   }
 
   
-  // TODO delete msg
   return data;
 }
 

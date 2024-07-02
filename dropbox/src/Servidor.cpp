@@ -9,7 +9,6 @@ Servidor::Servidor(string ipLocal) : connectClientSocket(SERVER_PORT), listenToS
     this->ipLocal = ipLocal;
     this->ipMain = ipLocal;
     this->usersIp = {};
-    this->status = STATUS_NORMAL;
     initializeUsers();
     initializePorts();
 }
@@ -19,30 +18,7 @@ void Servidor::run(){
     while(true){
         if(this->isMain){
             connectNewClient();
-        }
-        else {
-            this->electionMutex.lock();
-            if (this->status == STATUS_NORMAL) {
-                this->electionMutex.unlock();
-                Pacote packet = make_packet(TYPE_PING, 1, 1, -1, "");
-                talkToPrimaryMtx.lock();
-                bool isPrimaryAlive = this->talkToPrimary->send(&packet, 100);
-                talkToPrimaryMtx.unlock();
-                this->electionMutex.lock();
-                if(!isPrimaryAlive && this->status == STATUS_NORMAL){
-                    this->status = BEGIN_ELECTION;
-                    this->electionMutex.unlock();
-                    backupList.lock();
-                    backupList.unlock();
-                } else {
-                    this->electionMutex.unlock();
-                }
-                this_thread::sleep_for(chrono::milliseconds(3000));
-            } else {
-                this->electionMutex.unlock();
-            }
-        }
-        
+        }        
     }
 }
 
@@ -236,7 +212,7 @@ void Servidor::updateClient(vector<RegistroDeArquivos> serverFiles, vector<Regis
                 break;
         }
     }
-    // Send files that the client didn't have at the moment
+
     for(RegistroDeArquivos serverFile: serverFiles) { 
         this->sendFile(socket, user->getDirPath() + string(serverFile.nomeArquivo), serverFile, user->getUsername());
     }
