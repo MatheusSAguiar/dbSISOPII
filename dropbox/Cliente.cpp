@@ -10,7 +10,9 @@
 #include <iostream>
 #include <ifaddrs.h>
 #include <netinet/in.h>
-#include <boost/algorithm/string.hpp>
+#include <cctype> 
+#include <sstream>
+#include <algorithm>
 #include "include/FuncoesSocket.hpp"
 #include "include/Pacote.hpp"
 #include "include/Constantes.hpp"
@@ -40,7 +42,12 @@ vector<string> getArguments(){
 	getline(cin, entrada);
 	entrada.erase(std::remove(entrada.begin(), entrada.end(), '\n'), entrada.end());
 	vector<string> parametros;
-	boost::split(parametros, entrada, [](char c){return c == ' ';});
+	stringstream ss(entrada);
+	string item;
+
+	while (std::getline(ss, item, ' ')) {
+		parametros.push_back(item);
+	}	
 	return parametros;
 }
 
@@ -68,7 +75,7 @@ int main(int argc, char *argv[])
 			client.lockMutex();
 			
 			string comando = arguments[0];
-			boost::to_upper(comando);
+			std::transform(comando.begin(), comando.end(), comando.begin(), ::toupper);
 			if (comando == "UPLOAD"){
 				if(arguments.size() != 2) puts("Tamanho do comando errado -- upload <file path>");
 				else {
