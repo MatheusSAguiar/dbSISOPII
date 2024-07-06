@@ -43,11 +43,8 @@ namespace dropbox {
             const string dirRaiz = "/tmp/DropboxSISOPII/";
         
         private:
-        mutex electionMutex;
-        mutex propagationMutex;
+        
         mutex portsMutex;
-        mutex backupList;
-        mutex talkToPrimaryMtx;
 
         FuncoesSocket connectClientSocket;
         FuncoesSocket listenToServersSocket;
