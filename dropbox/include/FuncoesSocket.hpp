@@ -23,32 +23,23 @@ namespace dropbox {
 class FuncoesSocket
 {
   public:
-    /*
-    *    Constructor for the client, connecting to the given host
-    */
+
+   // Construtor do cliente conecta a um host
     FuncoesSocket(string host, int port);
-    
-    /*
-    *    Constructor for the Servidor
-    */
+
+    // Construtor do servidor conecta a uma porta
     FuncoesSocket(int port);
     FuncoesSocket();
     ~FuncoesSocket();
 
-    /*
-    *    Send a packet
-    */
+   // Manda um pacote
     int send(Pacote *packet);
     bool send(Pacote *packet, int wait);
 
-    /*
-    *    Bind socket
-    */
+    // Bind no socket com a porta
     void bindSocket(int port);
 
-    /*
-    *    Receive a datagram and sends and ack if it is necessary
-    */
+   // Recebe um pacote
     Pacote *receive(int timeout);
     Pacote *receive(int timeout, int time);
     int getPortInt();

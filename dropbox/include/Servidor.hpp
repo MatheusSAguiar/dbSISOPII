@@ -1,5 +1,5 @@
-#ifndef __MYServidor_HPP__
-#define __MYServidor_HPP__
+#ifndef __Servidor_HPP__
+#define __Servidor_HPP__
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,73 +60,43 @@ namespace dropbox {
         bool isMain;
 
 
-        /**
-         *  Return a Port not beign used.
-         *  Race condition is protected by portsMutex
-         */
+        // Pega uma porta disponivel
         int getAvailablePort();
 
-        /**
-         *  Set all port to available
-         */
+        // Inicializa todas as portas como disponíveis
         void initializePorts();
 
-        /**
-         *  Set a port to available
-         *  Race condition is protected by portsMutex
-         */
+        // Seta a porta como disponível
         void setPortAvailable(int port);
 
-        /**
-         *  Check all directories on /tmp/DropboxService/ and create an User for each directory
-         */
+        // Cria um usuário para cada pasta no diretório raiz
         void initializeUsers();
 
-        /**
-         *  This method is executed in another thread, listening to client requests
-         */
+        // Método que espera requests do cliente em outra thread
         void listenToClient(FuncoesSocket *socket, Usuario *user);
 
-        /**
-         *  Receive a request to check if a file is outdated
-         */
+        // Recebe um pacote para checar se o arquivo está atualizado
         void receiveAskUpdate(FuncoesSocket * socket, Usuario * user);
 
-        /**
-         *  Refuse a client if the number of devices being used by the client is bigger than MAX_DEVICES
-         */
+        // Recusa o cliente se o limite de dispositivos foi alcançado
         void refuseOverLimitClient(Usuario *user);
 
-        /**
-         *  Connect a new Client on a new socket with a new port
-         */
+        // Conecta um cliente em um novo socket
         void connectNewClient();
 
-        /**
-         *  Returns the User from username
-         *  Returns nullptr if the User does not exist
-         */
+        // Retorna o usuário pelo username
         Usuario* getUser(string username);
 
-        /**
-         *  Look for the FileRecord given on Servidor files and remove it from files if it doesn't need
-         *  to be sent to client. If it needs to be updated the updatedFile parameter is updated.
-         */
+        // Procura um arquivo no registro do servidor, se achar, remove para não enviar para o usuário de novo
         int lookForRecordAndRemove(RegistroDeArquivos file, vector<RegistroDeArquivos> *files, RegistroDeArquivos * updatedFile);
 
-        /**
-         *  Update oudated or missing client files
-         */
+        // Atualiza arquivos do cliente faltando
         void updateClient(vector<RegistroDeArquivos> ServidorFiles, vector<RegistroDeArquivos> clientFiles, FuncoesSocket * socket, Usuario * user);
 
-        /** 
-         *  Ends a client session, closing its socket
-         */
+        // Fecha o socket de um usuario
         void exitUser(FuncoesSocket *socket, Usuario *user);
-        
-        /**
-         * Sends the file's filerecord that's within the dirPath through the given socket
-         */
+
+        // Manda o registro do arquivos do diretório do servidor pelo socket
         void sendFileRecord(FuncoesSocket * socket, string filename, Usuario * user);
     };
 

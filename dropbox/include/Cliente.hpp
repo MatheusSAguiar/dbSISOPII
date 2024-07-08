@@ -30,8 +30,8 @@
 #include "Operacoes.hpp"
 
 /*
-*    Class representing the Client on the client-side of the System.
-*    The sync directory will be created on path /tmp/sync_dir_<username>
+    Classe que representa a parte do cliente.
+    A pasta é criada em /tmp/sync_dir_<username>
 */
 namespace dropbox
 {
@@ -47,13 +47,10 @@ namespace dropbox
             mutex socketMtx;
             vector<RegistroDeArquivos> fileRecords;
 
-            /**
-             *  This method is executed in another thread, treating the inotify and the updates from the Servidor
-             */
+            // Esse método trata o inotify em outra thread
             void askServidorUpdates();
-            /**
-             *  Create the sync directory on path /tmp/sync_dir_<username>
-             */
+            
+            // Cria a pasta sincronizada em /tmp/sync_dir_<username>
             void createSyncDir();
 
         public:
@@ -61,71 +58,47 @@ namespace dropbox
             ~Cliente();
 
             string getUsername() { return username; }
-            /**
-             *  Send a TYPE_REQUEST_UPDATE packet for the Servidor and deals with the response to syncronize the local dir with the Servidor
-             */
+
+            // Manda um pacote TYPE_REQUEST_UPDATE e sincroniza o diretório local com o do servidor
 			string payload1;
 			int payload2;
             void askUpdate();
 
-            /**
-             *  Process the detected inotify events
-             */
+            // Quando o inotify detectar eventos, eles são processados aqui
             void eventsInotify(int* fd);
 
-            /**
-             *  Initialize the inotify and add the watch to the local dir
-             */
+            // Coloca o watch do inotify no diretório local
             void initializeInotify(int *fd, int *wd);
 
-            /**
-             *  Download filename from Servidor
-             */
+            
+            // Baixar arquivo do servidor
             void download(string filename);
 
-            /**
-             *  Print the file records of the client
-             */
+            // Printa os arquivos do cliente
             void list_client();
 
-            /**
-             * Delete all files from local dir and download all from Servidor
-             */
+            // Deleta os arquivos da pasta local e baixa do servidor
             void get_sync_dir();
 
-            /**
-             * End session
-             */
+            // Finaliza a sessão
             void exit();
 
-            /**
-             * Prints the Servidor file record list
-             */
+            // Printa a lista de arquivos do servidor
             void requestServerFileList();
 
-            /**
-             * Remove the file record of filename from the list
-             */
+            // Remove um arquivo do registro
             void removeFileRecord(string filename);
 
-            /**
-             * Update filerecord on the list
-             */
+            // Atualiza o registro de arquivos
             void updateFileRecord(RegistroDeArquivos newFile);
             
-            /**
-             * Return the Client's socket
-             */
+            // Retorna o socket do cliente
             dropbox::FuncoesSocket * getSocket() { return socket; }
 
-            /**
-             * Return full path of syncDir folder
-             */
+            // Retorna o caminho da pasta de sync
             string getSyncDirPath() { return syncDirPath; }
             
-            /**
-             * Mutex to synchronize update sending and keyboard commnands 
-             */
+            // Mutex
             void lockMutex() { this->mtx.lock(); };
             void unlockMutex() { this->mtx.unlock(); };
 
