@@ -16,9 +16,7 @@
 #include "RegistroDeArquivos.hpp"
 #include "Constantes.hpp"
 
-/*
-*    Class representing a instance of an user on the Servidor, grouping their devices
-*/
+// Classe de um usuário no servidor
 namespace dropbox
 {
     class Usuario
@@ -30,9 +28,7 @@ namespace dropbox
             vector<FuncoesSocket*> devices;
             mutex mt;
 
-            /**
-            *  Create the user directory on the Servidor if it is a new one, otherwise get the file records of the dir
-            */
+            // Cria a pasta do usuário no servidor se for nova
             void createUserDir();
 
         public:
@@ -40,35 +36,24 @@ namespace dropbox
             string getUsername();
             string getDirPath();
 
-            /**
-            *  Returns if there is 0, 1 or 2 devices connected
-            */
+            // Retorna o número de dispositivos conectados
             int getNumDevicesConnected();
 
-            /**
-            *  Add the given FuncoesSocket to the devices list
-            */
+            // Adicionado o socket para a lista de dispositivos
             void addDevice(FuncoesSocket *socket);
 
-            /**
-            *  Remove the given FuncoesSocket of the devices list
-            */
+            // Remove o socket da lista de dispositivos
             void closeDeviceSession(FuncoesSocket *socket);
 
-            /**
-            *  Lock and unlock functions for the devices mutex
-            */
+            // Mutex para evitar problemas de condição de corrida
             void lockDevices() { this->mt.lock(); };
             void unlockDevices() { this->mt.unlock(); };
             vector<RegistroDeArquivos> getFileRecords();
-            /**
-             * Remove the file record of filename from the list
-             */
+
+            // Remove o registro de arquivos do arquivo
             void removeFileRecord(string filename);
 
-            /**
-             * Update filerecord on the list
-             */
+            // Atualiza o registro de arquivos de um arquivo
             void updateFileRecord(RegistroDeArquivos newFile);
     };
 }

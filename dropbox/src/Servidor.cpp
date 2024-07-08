@@ -42,11 +42,11 @@ void Servidor::initializeUsers()
         closedir(dir);
     } 
     else if(mkdir(dirRaiz.c_str(), 0777) == 0) 
-        cout << "CREATED ROOT DIR" << endl;
+        cout << "Criado o diretório raiz" << endl;
     else
-        cout << "COULDN'T OPEN OR CREATE ROOT DIR" << endl;
+        cout << "Não foi possivel abrir o diretório raiz" << endl;
 
-    cout << "System Users :" << endl;
+    cout << "Usuários :" << endl;
     for(Usuario *user : users)
     {
         cout << user->getUsername().c_str() << endl;
@@ -122,7 +122,7 @@ void Servidor::connectNewClient()
 
 void Servidor::refuseOverLimitClient(Usuario *user)
 {
-    string message = "Number of devices for user " + user->getUsername() + " were used up! Max number of devices : " + to_string(MAX_DEVICES);
+    string message = "Numero máximo de dispositivos de " + user->getUsername() + " atingido. Numero máximo : " + to_string(MAX_DEVICES);
     Pacote packet = make_packet(TYPE_REJECT_TO_LISTEN, 1, 1, -1, message.c_str());
     connectClientSocket.send(&packet);
 }
@@ -196,7 +196,7 @@ int Servidor::lookForRecordAndRemove(RegistroDeArquivos file, vector<RegistroDeA
 }
 
 void Servidor::updateClient(vector<RegistroDeArquivos> serverFiles, vector<RegistroDeArquivos> clientFiles, FuncoesSocket *socket, Usuario *user) {
-    cout << "Checking if user " << user->getUsername() << " is updated." << endl;
+    cout << "Checando se o usuário" << user->getUsername() << " esta atualizado." << endl;
     vector<RegistroDeArquivos>::iterator it;
     RegistroDeArquivos temp;
     for(it = clientFiles.begin(); it != clientFiles.end(); it++) {
@@ -236,7 +236,7 @@ void Servidor::exitUser(FuncoesSocket *socket, Usuario *user){
     int port = socket->getPortInt();
     user->closeDeviceSession(socket);
     setPortAvailable(port);
-    cout << "User " + user->getUsername() + " ended session on device on port " << port << endl;
+    cout << "Usuario " + user->getUsername() + " finalizou a sessão na porta " << port << endl;
 }
 
 void synchronize(){

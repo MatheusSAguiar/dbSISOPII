@@ -10,7 +10,7 @@ Pacote dropbox::make_packet(int type, int seq, int totalSize, int len, const cha
     data.totalSize = totalSize;
     data.len = len;
     data.socketSeq = -1;
-    // File or record packets can't have \0 at the end of the payload
+    // Pacotes de dados não tem \0 no fim da mensagem, por isso o memcpy
     if(type == TYPE_DATA || type == TYPE_SEND_FILE)
         memcpy(data.payload, payload, len);
     else
@@ -26,7 +26,7 @@ Pacote dropbox::make_packet(int type, int seq, int totalSize, int len, const cha
     data.totalSize = totalSize;
     data.len = len;
     data.socketSeq = -1;
-    // File or record packets can't have \0 at the end of the payload
+    // Pacotes de dados não tem \0 no fim da mensagem, por isso o memcpy
     if(type == TYPE_DATA || type == TYPE_SEND_FILE)
         memcpy(data.payload, payload, len);
     else

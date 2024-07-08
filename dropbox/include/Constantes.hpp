@@ -16,10 +16,10 @@
 
 #define MAX_DEVICES 2
 
-#define MAX_EVENTS 1024 /*Max. number of events to process at one go*/
-#define LEN_NAME 200 /*Assuming that the length of the filename won't exceed 16 bytes*/
-#define EVENT_SIZE  ( sizeof (struct inotify_event) ) /*size of one event*/
-#define BUF_LEN     ( MAX_EVENTS * ( EVENT_SIZE + LEN_NAME )) /*buffer to store the data of events*/
+#define MAX_EVENTS 1024 // Número máximo de eventos processados de uma vez
+#define LEN_NAME 200 // Tamanho máximo do nome do arquivo
+#define EVENT_SIZE  ( sizeof (struct inotify_event) ) // Tamanho de um evento
+#define BUF_LEN     ( MAX_EVENTS * ( EVENT_SIZE + LEN_NAME )) // Buffer de eventos
 
 
 enum TYPES

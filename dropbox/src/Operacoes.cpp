@@ -87,7 +87,7 @@ void Operacoes::sendFile(FuncoesSocket *socket, string filePath, RegistroDeArqui
 	int filePointer = 0;
 	int packetSize = MESSAGE_LEN;
 	char payload[MESSAGE_LEN];
-	cout << "Uploading " << filePath << " Size: " << fileSize << " NumPackets: " << totalPackets << endl;
+	cout << "Uploading " << filePath << " tamanho: " << fileSize << " pacotes: " << totalPackets << endl;
 
 	while (packetsSent < totalPackets){
 		file.seekg(filePointer, file.beg);
@@ -124,7 +124,7 @@ void Operacoes::sendFile(FuncoesSocket *socket, string filePath){
 	int filePointer = 0;
 	int packetSize = MESSAGE_LEN;
 	char payload[MESSAGE_LEN];
-	cout << "Uploading " << filePath << " Size: " << fileSize << " NumPackets: " << totalPackets << endl;
+	cout << "Uploading " << filePath << " tamanho: " << fileSize << " pacotes: " << totalPackets << endl;
 
 	while (packetsSent < totalPackets){
 		file.seekg(filePointer, file.beg);
@@ -161,7 +161,7 @@ void Operacoes::sendFile(FuncoesSocket *socket, string filePath, string username
 	int filePointer = 0;
 	int packetSize = MESSAGE_LEN;
 	char payload[MESSAGE_LEN];
-	cout << "Uploading " << filePath << " Size: " << fileSize << " NumPackets: " << totalPackets << endl;
+	cout << "Uploading " << filePath << " tamanho: " << fileSize << " pacotes: " << totalPackets << endl;
 
 	while (packetsSent < totalPackets){
 		file.seekg(filePointer, file.beg);
@@ -198,7 +198,7 @@ RegistroDeArquivos Operacoes::sendFileClient(FuncoesSocket *socket, string fileP
 	int filePointer = 0;
 	int packetSize = MESSAGE_LEN;
 	char payload[MESSAGE_LEN];
-	cout << "Uploading " << filePath << " Size: " << fileSize << " NumPackets: " << totalPackets << endl;
+	cout << "Uploading " << filePath << " tamanho: " << fileSize << " pacotes: " << totalPackets << endl;
 
 	while (packetsSent < totalPackets){
 		file.seekg(filePointer, file.beg);

@@ -18,90 +18,58 @@ using namespace std;
 namespace dropbox {
 class Operacoes
 {
-  public:
+    public:
     Operacoes();
 
-    /**
-    *  Return the FileRecords for all the files in the given directory
-    */
+    // Retorna o registro de arquivos de todos os arquivos do caminho
     vector<RegistroDeArquivos> getFileList(string dirPath);
 
-    /**
-    *  Return the FileRecord of the specific filename
-    */
+    // Retorna o registro de um arquivo
     RegistroDeArquivos getRecord(vector<RegistroDeArquivos> files, string filename);
 
-    /**
-    *  Remove the file
-    */
+    // Deleta o arquivo de um caminho
     void deleteFile(string filepath);
 
-    /**
-    *  Remove all files from the given directory
-    */
+    // Deleta todos os arquivos de uma pasta
     void deleteAll(vector<RegistroDeArquivos> files, string dirPath);
 
-    /**
-    *  Send a packet of TYPE_NOTHING_TO_SEND
-    */
+    // Manda um pacote TYPE_NOTHING_TO_SEND
     void sendNothing(FuncoesSocket * socket);
 
-    /**
-    *  Send TYPE_DATA packets containing each FileRecord of the list
-    */
+    // Manda pacotes TYPE_DATA com o registro dos arquivos da lista
     void sendFileList(FuncoesSocket * socket, vector<RegistroDeArquivos> files);
 
-    /**
-    *  Send a TYPE_SEND_FILE with the file record and then send the whole file in TYPE_DATA packets
-    */
+    // Manda um pacote TYPE_SEND_FILE com o registro de arquivos e depois manda o arquivo em pacotes TYPE_DATA
     void sendFile(FuncoesSocket * socket, string filePath, RegistroDeArquivos fileRec, string username);
 
-    /**
-    *  Send a TYPE_SEND_FILE_NO_RECORD and then send the whole file in TYPE_DATA packets
-    */
+    // Manda um pacote TYPE_SEND_FILE_NO_RECORD e manda o arquivo em pacotes TYPE_DATA
     void sendFile(FuncoesSocket * socket, string filePath);
     void sendFile(FuncoesSocket * socket, string filePath, string username);
 
-    /**
-    *  Send a TYPE_DELETE packet with the name of the file to delete
-    */
+    // Manda um pacote TYPE_DELETE com o nome do arquivo para deletar
     void sendDeleteFile(FuncoesSocket * socket, string filename);
 
     void sendDeleteFile(FuncoesSocket * socket, string filename, string username);
 
-    /**
-    *  Send all the files on the dirPath with their file records
-    */
+    // Manda todos os arquivos do diretório com o registro
     void sendUploadAll(FuncoesSocket * socket, string dirPath, vector<RegistroDeArquivos> files, string username);
 
-    /**
-    *  Receive a file and create it in filename
-    */
+    // Recebe um arquivo e cria em <filename>
     void receiveFile(FuncoesSocket * socket, string filename, string dirPath);
 
-    /**
-    *  Receive and return a file records list
-    */
+    // Recebe uma lista de registro de arquivos
     vector<RegistroDeArquivos> receiveFileList(FuncoesSocket * socket);
 
-    /**
-    *  Print the given file records list
-    */
+    // Printa a lista de registro de arquivos
     void printFileList(vector<RegistroDeArquivos> fileRecords);
 
-    /**
-    *  Receive all files
-    */
+    // Recebe todos os arquivos do caminho
     void receiveUploadAll(FuncoesSocket * socket, string dirPath);
 
-    /**
-    * Receive a file record
-    */
+    // Recebe um registro de arquivos
     RegistroDeArquivos receiveFileRecord(FuncoesSocket * socket);
 
-    /**
-    * Send a file and receives a filerecord
-    */
+    // Manda um arquivo e recebe um registro
     RegistroDeArquivos sendFileClient(FuncoesSocket * socket, string filePath, string username);
 };
 }
