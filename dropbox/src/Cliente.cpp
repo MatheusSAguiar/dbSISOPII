@@ -30,18 +30,18 @@ Cliente::Cliente (string username, string ServidorAddr, int ServidorDistributorP
 	get_sync_dir();
 	thread askServidorUpdatesThread(&Cliente::askServidorUpdates, this);
 	askServidorUpdatesThread.detach();
-	std::cout << "Connected Successfully." << endl;
+	std::cout << "Conectado." << endl;
 }
 
 void Cliente::initializeInotify(int *fd, int *wd){
 	*fd = inotify_init();
 	if ( *fd < 0 ) {
-		std::cout << "Couldn't initialize inotify" << endl;
+		std::cout << "Erro ao iniciar o inotify" << endl;
 	}
 	*wd = inotify_add_watch(*fd, syncDirPath.c_str(), IN_CLOSE_WRITE | IN_MOVED_FROM | IN_MOVED_TO); 
 
 	if (*wd == -1){
-		std::cout << "Couldn't add watch to " << syncDirPath.c_str() << endl;
+		std::cout << "Erro ao adicionar inotify em " << syncDirPath.c_str() << endl;
 	}
 }
 void Cliente::askServidorUpdates() {
@@ -65,7 +65,6 @@ void Cliente::askServidorUpdates() {
 		this->unlockMutex();
 		this_thread::sleep_for(chrono::milliseconds(5000));
 	}
-	/* Clean up*/
 	inotify_rm_watch(fd, wd);
 	close(fd);
 }
@@ -74,7 +73,7 @@ void Cliente::createSyncDir(){
 	struct stat st;
 	if(stat(syncDirPath.c_str(), &st) == -1){ //Se não existe cria, se existe faz nada
 		mkdir(syncDirPath.c_str(), 0777);
-		cout << "Created Sync Dir on " + syncDirPath << endl;
+		cout << "Pasta de sync criada em " + syncDirPath << endl;
 	}
 }
 
@@ -132,7 +131,7 @@ void Cliente::askUpdate() {
 				socketMtx.unlock();
 				break;
 			default:
-				std::cout << "Received " + to_string(response->type) << endl;
+				std::cout << "Recebido " + to_string(response->type) << endl;
 		}
 	}
 }
@@ -162,13 +161,13 @@ void Cliente::eventsInotify(int* fd){
 	int length, i = 0;
 	char buffer[BUF_LEN];
 	struct pollfd pfd = { *fd, POLLIN, 0 };
-	int ret = poll(&pfd, 1, 50);  // timeout of 50ms
+	int ret = poll(&pfd, 1, 50);  // timeout de 50ms
 	if (ret < 0) {
-		fprintf(stderr, "poll failed: %s\n", strerror(errno));
+		fprintf(stderr, "Erro no poll %s\n", strerror(errno));
 	} else if (ret == 0) {
-		// Timeout with no events, move on.
+		// Se não tem eventos, não faz nada
 	} else {
-		// Process the new event.
+		// Se tem eventos, processa eles
 		length = read(*fd, buffer, BUF_LEN);  
 		while (i < length) {
 			struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ];
@@ -210,7 +209,7 @@ void Cliente::download(string filename){
 
 	char cCurrentPath[FILENAME_MAX];
 	if (!getcwd(cCurrentPath, sizeof(cCurrentPath))) 
-		std::cout << "ERROR GETTING THE CURRENT DIRECTORY!!" << endl;
+		std::cout << "Erro ao pegar o diretorio atual" << endl;
 	cCurrentPath[sizeof(cCurrentPath) - 1] = '\0';
 	string currentPath(cCurrentPath);
 	currentPath += "/";
@@ -221,7 +220,7 @@ void Cliente::download(string filename){
 		this->receiveFile(this->socket, string(fileRecord->nomeArquivo), currentPath);
 	}
 	else if(data->type == TYPE_NOTHING_TO_SEND)
-		std::cout << "File does not exist." << endl;
+		std::cout << "Arquivo não existe." << endl;
 }
 
 void Cliente::list_client(){
@@ -241,9 +240,9 @@ void Cliente::get_sync_dir(){
             }
         }
         closedir(dir);
+	    cout << "Removido todos os arquivos locais." << endl;
     } 
-	cout << "Deleted all files." << endl;
-	Pacote packet = make_packet(TYPE_LIST_SERVER, 1, 1, -1, "list_Servidor");
+	Pacote packet = make_packet(TYPE_LIST_SERVER, 1, 1, -1, "list_server");
 	socket->send(&packet);
 	this->fileRecords = this->receiveFileList(this->getSocket());
 	for(RegistroDeArquivos record : this->fileRecords){
@@ -255,17 +254,17 @@ void Cliente::get_sync_dir(){
 		}
 	}
 	this->printFileList(this->fileRecords);
-	cout << "Received all files." << endl;
+	cout << "Recebido todos os arquivos do servidor." << endl;
 }
 
 void Cliente::exit(){
-	Pacote message = make_packet(EXIT, 1, 1, -1, "");
+	Pacote message = make_packet(EXIT, 1, 1, -1, "exit");
 	this->socket->send(&message);
 }
 
 void Cliente::requestServerFileList() {
 
-	Pacote packet = make_packet(TYPE_LIST_SERVER, 1, 1, -1, "list_Servidor");
+	Pacote packet = make_packet(TYPE_LIST_SERVER, 1, 1, -1, "list_server");
 	socket->send(&packet);
 	vector<RegistroDeArquivos> files = this->receiveFileList(this->getSocket());
 	this->printFileList(files);

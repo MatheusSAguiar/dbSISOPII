@@ -12,7 +12,7 @@ FuncoesSocket::FuncoesSocket (string host, int port) {
   this->localSocketHandler = socket(AF_INET, SOCK_DGRAM, 0);
   this->lastData = NULL;
   if (this->localSocketHandler == ERROR) {
-    fprintf(stderr, "Error on creating socket");
+    fprintf(stderr, "Erro ao criar um socket");
     exit(1);
   }
   this->socketSeq = 0;
@@ -35,7 +35,7 @@ FuncoesSocket::FuncoesSocket (int port) {
   this->lastData = NULL;
   this->localSocketHandler = socket(AF_INET, SOCK_DGRAM, 0);
   if (this->localSocketHandler == ERROR) {
-    fprintf(stderr, "Error on creating socket");
+    fprintf(stderr, "Erro ao criar um socket");
     exit(1);
   }
   this->bindSocket(port);
@@ -50,7 +50,7 @@ bool FuncoesSocket::send(Pacote *packet, int wait) {
   do{
 
     if (sendto(this->localSocketHandler, (void *)packet, PACKET_LEN, 0,(const struct sockaddr *) &(this->remoteSocketAddr),sizeof(struct sockaddr_in)) < 0) {
-      fprintf(stderr, "Error on sending");
+      fprintf(stderr, "Erro ao enviar ");
       cout << string(packet->payload) << packet->type << " " << string(packet->username) << endl;
       exit(1);
     }
@@ -82,7 +82,7 @@ int FuncoesSocket::send(Pacote *packet) {
   do{
 
     if (sendto(this->localSocketHandler, (void *)packet, PACKET_LEN, 0,(const struct sockaddr *) &(this->remoteSocketAddr),sizeof(struct sockaddr_in)) < 0) {
-      fprintf(stderr, "Error on sending");
+      fprintf(stderr, "Erro ao enviar");
       cout << string(packet->payload) << packet->type << " " << string(packet->username) << endl;
       return -1;
     }
@@ -144,7 +144,7 @@ Pacote* FuncoesSocket::receive(int timeout) {
     int msgSize = recvfrom(this->localSocketHandler, (void *) msg, 
       PACKET_LEN, 0, (struct sockaddr *) &this->remoteSocketAddr, &this->remoteSocketLen);
     if (msgSize < 0) {
-      fprintf(stderr, "Error on receiving\n");
+      fprintf(stderr, "Erro ao receber\n");
       exit(1);
     }
 
@@ -175,7 +175,7 @@ Pacote* FuncoesSocket::receive(int timeout, int time) {
     fd.events = POLLIN;
     int ret = poll(&fd, 1, time);
     switch(ret) {
-      case -1: printf("Error\n");
+      case -1: printf("Erro no poll\n");
         return NULL;
       case 0: 
         return NULL;
@@ -192,7 +192,7 @@ Pacote* FuncoesSocket::receive(int timeout, int time) {
     int msgSize = recvfrom(this->localSocketHandler, (void *) msg, 
       PACKET_LEN, 0, (struct sockaddr *) &this->remoteSocketAddr, &this->remoteSocketLen);
     if (msgSize < 0) {
-      fprintf(stderr, "Error on receiving\n");
+      fprintf(stderr, "Error ao receber\n");
       exit(1);
     }
     data = (Pacote *) msg;
@@ -215,7 +215,7 @@ Pacote* FuncoesSocket::receive(int timeout, int time) {
 
 void FuncoesSocket::sendAck(Pacote *ack) {
   if (sendto(this->localSocketHandler, (void *)ack, PACKET_LEN, 0,(const struct sockaddr *) &(this->remoteSocketAddr), sizeof(struct sockaddr_in)) < 0) {
-    fprintf(stderr, "Error on sending ACK");
+    fprintf(stderr, "Error em mandar ACK");
     exit(1);
   }
 }
@@ -226,7 +226,7 @@ void FuncoesSocket::bindSocket(int port) {
 	this->remoteSocketAddr.sin_addr.s_addr = INADDR_ANY;
   bzero(&(this->remoteSocketAddr.sin_zero), 8);
   if (bind(this->localSocketHandler, (struct sockaddr *) &this->remoteSocketAddr, sizeof(struct sockaddr)) < 0) {
-    fprintf(stderr, "Error on binding");
+    fprintf(stderr, "Erro no bind de uma porta ao socket");
     exit(1);
   }
 }
