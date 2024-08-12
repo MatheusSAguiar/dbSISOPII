@@ -82,7 +82,6 @@ void Servidor::removeFromBackup(vector<string> backups, string main) {
     }
 }
 
-
 Servidor::~Servidor(){
     for(Usuario *user : users){
         delete user;
@@ -293,11 +292,11 @@ void Servidor::initializeUsers()
         closedir(dir);
     } 
     else if(mkdir(dirRaiz.c_str(), 0777) == 0) 
-        cout << "Criado o diretório raiz" << endl;
+        cout << "CREATED ROOT DIR" << endl;
     else
-        cout << "Não foi possivel abrir o diretório raiz" << endl;
+        cout << "COULDN'T OPEN OR CREATE ROOT DIR" << endl;
 
-    cout << "Usuários :" << endl;
+    cout << "System Users :" << endl;
     for(Usuario *user : users)
     {
         cout << user->getUsername().c_str() << endl;
@@ -403,9 +402,10 @@ void Servidor::propagateConnection(string username, string userIp)
     propagationMutex.unlock();
 }
 
+
 void Servidor::refuseOverLimitClient(Usuario *user)
 {
-    string message = "Numero máximo de dispositivos de " + user->getUsername() + " atingido. Numero máximo : " + to_string(MAX_DEVICES);
+    string message = "Number of devices for user " + user->getUsername() + " were used up! Max number of devices : " + to_string(MAX_DEVICES);
     Pacote packet = make_packet(TYPE_REJECT_TO_LISTEN, 1, 1, -1, message.c_str());
     connectClientSocket.send(&packet);
 }
@@ -440,14 +440,14 @@ bool Servidor::waitForCoordinator()
     }
 }
 
-void Servidor::listenToClient(FuncoesSocket *socket, Usuario *user)
+void Server::listenToClient(WrapperSocket *socket, User *user)
 {   
     bool exit = false;
-    RegistroDeArquivos * temp = NULL;
-    RegistroDeArquivos fileTemp;
-    vector<RegistroDeArquivos> tempFiles = user->getFileRecords();
+    FileRecord * temp = NULL;
+    FileRecord fileTemp;
+    vector<FileRecord> tempFiles = user->getFileRecords();
 	while(!exit){
-		Pacote *data = socket->receive(TIMEOUT_OFF);
+		MessageData *data = socket->receive(TIMEOUT_OFF);
         user->lockDevices();
         switch(data->type){
             case TYPE_REQUEST_DOWNLOAD:
@@ -458,6 +458,7 @@ void Servidor::listenToClient(FuncoesSocket *socket, Usuario *user)
             case TYPE_DELETE: 
                 deleteFile(user->getDirPath() + string(data->payload));
                 user->removeFileRecord(string(data->payload));
+                propagateDelete(string(data->payload), string(data->username));
                 break;
             case TYPE_LIST_SERVER:
                 sendFileList(socket, user->getFileRecords());
@@ -466,6 +467,7 @@ void Servidor::listenToClient(FuncoesSocket *socket, Usuario *user)
                 receiveFile(socket, string(data->payload), user->getDirPath());
                 user->updateFileRecord(this->getRecord(this->getFileList(user->getDirPath()), string(data->payload)));
                 sendFileRecord(socket, string(data->payload), user);
+                this->propagateFile(string(data->payload), string(data->username));
                 break;
             case TYPE_REQUEST_UPLOAD_ALL:
                 sendUploadAll(socket, user->getDirPath(), getFileList(user->getDirPath()), user->getUsername());
@@ -509,7 +511,7 @@ int Servidor::lookForRecordAndRemove(RegistroDeArquivos file, vector<RegistroDeA
 }
 
 void Servidor::updateClient(vector<RegistroDeArquivos> serverFiles, vector<RegistroDeArquivos> clientFiles, FuncoesSocket *socket, Usuario *user) {
-    cout << "Checando se o usuário" << user->getUsername() << " esta atualizado." << endl;
+    cout << "Checking if user " << user->getUsername() << " is updated." << endl;
     vector<RegistroDeArquivos>::iterator it;
     RegistroDeArquivos temp;
     for(it = clientFiles.begin(); it != clientFiles.end(); it++) {
@@ -549,7 +551,7 @@ void Servidor::exitUser(FuncoesSocket *socket, Usuario *user){
     int port = socket->getPortInt();
     user->closeDeviceSession(socket);
     setPortAvailable(port);
-    cout << "Usuario " + user->getUsername() + " finalizou a sessão na porta " << port << endl;
+    cout << "User " + user->getUsername() + " ended session on device on port " << port << endl;
 }
 
 void synchronize(){
