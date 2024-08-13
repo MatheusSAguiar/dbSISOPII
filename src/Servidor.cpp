@@ -440,14 +440,14 @@ bool Servidor::waitForCoordinator()
     }
 }
 
-void Server::listenToClient(WrapperSocket *socket, User *user)
+void Servidor::listenToClient(FuncoesSocket *socket, Usuario *user)
 {   
     bool exit = false;
-    FileRecord * temp = NULL;
-    FileRecord fileTemp;
-    vector<FileRecord> tempFiles = user->getFileRecords();
+    RegistroDeArquivos * temp = NULL;
+    RegistroDeArquivos fileTemp;
+    vector<RegistroDeArquivos> tempFiles = user->getFileRecords();
 	while(!exit){
-		MessageData *data = socket->receive(TIMEOUT_OFF);
+		Pacote *data = socket->receive(TIMEOUT_OFF);
         user->lockDevices();
         switch(data->type){
             case TYPE_REQUEST_DOWNLOAD:
